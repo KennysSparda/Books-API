@@ -1,15 +1,22 @@
+import Model from './model.js';
+import BatchQueue from './batchQueue.js';
+
+const batchQueue = new BatchQueue();
+
 export default class Controller {
   constructor () {
-    this.value = [];
+
+  }
+
+  set(data) {
+    const { name, description, author, genre, publisher } = data;
+    const newBook = new Model( name, description, author, genre, publisher );
+
+    batchQueue.add(newBook);
+    console.log("new book insert in queue.")
   }
 
   get() {
-    console.log(`${this.value} request`);
-    return this.value;
-  }
-
-  set(value) {
-    this.value = value;
-    console.log(`${this.value} updated`);
+    return batchQueue.queue.map(item => item.toDBObject());
   }
 }
