@@ -1,0 +1,26 @@
+version: '3.8'
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    ports:
+      - "8080:3000"
+
+    environment:
+      - NODE_ENV=production
+    
+    depends_on:
+      - redis
+      - postgres
+
+  redis:
+    image: redis:alpine
+
+  postgres:
+    image: postgres:alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydb
