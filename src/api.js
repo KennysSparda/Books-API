@@ -1,27 +1,9 @@
-const http = require('http');
+import http from 'http';
+import Controller from './controller.js';
 
-//import {Controller} from './controller.js';
-//
-class Controller {
-  constructor () {
-    this.value = null;
-  }
-
-  get() {
-    console.log(this.value + " solicitado!");
-    return this.value;
-  }
-
-  set(value) {
-
-    this.value = value;
-    console.log(this.value + " inserido com sucesso!");
-  }
-}
 const controller = new Controller();
 
-
-const handdleRequest = (request, response) => {
+const handdleRouteRequest = (request, response) => {
   
   let body = '';
 
@@ -34,28 +16,27 @@ const handdleRequest = (request, response) => {
    
     switch (request.url) {
       case '/':
-        response.end('Bienvenido a la pagina princilap!');
+        response.end("Inicio");
         break;
-      case '/sobre':
-        response.end('Sobre');
+      case '/about':
+        response.end('sobre');
         break;
-      case '/inserir-produto':
-      const data = JSON.parse(body);
-      controller.set(data);
+      case '/set-product':
+        const data = JSON.parse(body);
+        controller.set(data);
         response.end('Produto inserido com sucesso!')
         break;
-      case '/obter-produto':
+      case '/get-product':
         response.end(JSON.stringify(controller.get()));
         break;
       default:
         response.statusCode = 404;
-        response.end('404 Page not found');
+        response.end('404 route not found');
     }
   })
 }
 
-
-const server = http.createServer(handdleRequest)
+const server = http.createServer(handdleRouteRequest)
 
 const port = 8080
 
