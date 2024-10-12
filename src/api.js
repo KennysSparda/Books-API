@@ -1,46 +1,42 @@
-import http from 'http';
-import Controller from './controller.js';
+import express from 'express';
+import bodyParser from 'body-parser';
+//import http from 'http';
+import Controller from './controllers/ItemController';
 
+const app = express();
+const port = 8080;
 const controller = new Controller();
 
-const handdleRouteRequest = (request, response) => {
-  
-  let body = '';
+app.use(bodyParser.json());
 
-  request.on('data', chunk => {
-    body += chunk.toString();
-  });
+app.get('/', (request, response) => {
+  response.send("Inicio");
+})
 
-  request.on('end', () => {
+app.post('/set-product', async (request, response) => {
+  try {
+    const data = request.body;
+    await controller.set(data);
+    response.status(200).send('Produto inserido com sucesso!');
+  } catch (error) {
+    response.status(500).send('Erro ao inserir produto');
+  }
+});
 
-   
-    switch (request.url) {
-      case '/':
-        response.end("Inicio");
-        break;
-      case '/about':
-        response.end('sobre');
-        break;
-      case '/set-product':
-        const data = JSON.parse(body);
-        controller.set(data);
-        response.end('Produto inserido com sucesso!')
-        break;
-      case '/get-product':
-        response.end(JSON.stringify(controller.get()));
-        break;
-      default:
-        response.statusCode = 404;
-        response.end('404 route not found');
-    }
-  })
-}
+app.get('/get-product', (request, response) => {
+  try {
+    const items = await controller.get();
+    response.status(200).json(items)
+  } catch (error) {
+    response.status(500).send('Erro ao obter produtos');
+  }
+})
 
-const server = http.createServer(handdleRouteRequest)
+app.use((request, response) => {
+  response.status(404).send("404 route not found");
+});
 
-const port = 8080
-
-server.listen(port, () => {
+app.listen(port, () => {
   console.log(`Servidor iniciado na porta ${port}`);
 })
 

@@ -1,4 +1,4 @@
-import pool from './db.js';
+import pool from '../db/Pool.js';
 
 export default class Model {
   constructor (name, description, author, genre, publisher) {
